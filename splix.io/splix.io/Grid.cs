@@ -55,7 +55,9 @@ namespace splix.io
             {
                 for (int i = 0; i < _width; i++)
                 {
-                    blocks.Add(new Cell(new Sprite(_empty, new Vector2(x, y), Color.White)));
+                    Sprite cellImage = new Sprite(_empty, new Vector2(x + _empty.Width / 2, y + _empty.Height / 2), Color.White);
+
+                    blocks.Add(new Cell(cellImage));
                     x += _empty.Width;
                 }
                 x = 0;

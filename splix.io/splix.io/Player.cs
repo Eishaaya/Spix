@@ -41,8 +41,8 @@ namespace splix.io
             pix = pixel;
             _points = new List<Vector2>();
             _speed = speed;
-            _terra = new territory(new Sprite(terraimage, new Vector2(location.X, location.Y), color), _location);
-            _trail = new trail(new Sprite(trail, new Vector2(location.X , location.Y), color));
+            _terra = new territory(new Sprite(terraimage, new Vector2(location.X + _origin.X, location.Y + _origin.Y), color), _location);
+            _trail = new trail(new Sprite(trail, new Vector2(location.X, location.Y), color));
         }
 
         public void Update(GameTime gametime, KeyboardState ks, KeyboardState prevKs)
@@ -75,7 +75,7 @@ namespace splix.io
             //keep moving till you can change direction
             if (_changedDirection)
             {
-                if ((_location.X - _origin.X) % 30 == 0 && (_location.Y - _origin.Y) % 30 == 0)
+                if ((_location.X - 15) % 30 == 0 && (_location.Y - 15) % 30 == 0)
                 {
                     //_points.Add(new Vector2(_hitbox.X, _hitbox.Y));
                     _changedDirection = false;
@@ -98,7 +98,7 @@ namespace splix.io
 
             else
             {
-              
+
                 _trail.ClearTrail();
                 if (_points.Count >= 1)
                 {
@@ -112,7 +112,7 @@ namespace splix.io
 
         void move()
         {
-            
+
             if (direction == 0)
             {
                 //LocationX -= _speed;
@@ -134,7 +134,7 @@ namespace splix.io
                 _location.Y += _speed;
             }
             _hitbox.X = (int)(_location.X - (_image.Width / 2)) + 15;
-            _hitbox.Y = (int)(_location.Y  - (_image.Height / 2)) + 15;
+            _hitbox.Y = (int)(_location.Y - (_image.Height / 2)) + 15;
         }
 
         public override void draw(SpriteBatch spbt)

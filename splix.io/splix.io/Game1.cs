@@ -70,8 +70,11 @@ namespace splix.io
 
             spriteBatch = new SpriteBatch(GraphicsDevice);
             grid = new Grid(GraphicsDevice.Viewport.Width / 30, GraphicsDevice.Viewport.Height / 30, Content.Load<Texture2D>("CellBlock"));
-            player = new Player(Content.Load<Texture2D>("soldier"), new Vector2(random.Next(0, 64) * 30, random.Next(0, 36) * 30), colors[colorselect], 5, Content.Load<Texture2D>("tail"), Content.Load<Texture2D>("capturedcell"), Content.Load<Texture2D>("pixel"));
 
+            Texture2D playerImage = Content.Load<Texture2D>("mover");
+            Vector2 playerPos = new Vector2((random.Next(0, 64) * 30) + 15, (random.Next(0, 36) * 30) + 15);
+
+            player = new Player(playerImage, new Vector2(playerPos.X, playerPos.Y), colors[colorselect], 5, Content.Load<Texture2D>("tail"), Content.Load<Texture2D>("capturedcell"), Content.Load<Texture2D>("pixel"));
         }
         protected override void UnloadContent()
         {

@@ -23,13 +23,13 @@ namespace splix.io
             _points = new List<Sprite>();
             _terrasprite = terraSprite;
             Vector2 position = playerPos;
-
+            
             //add premade positions to draw
             for (int i = 0; i < 5; i++)
             {
                 for (int a = 0; a < 5; a++)
                 { 
-                    _points.Add(new Sprite( _terrasprite.Image, new Vector2 (position.X, position.Y), terraSprite.Color));
+                    _points.Add(new Sprite( _terrasprite.Image, new Vector2 (position.X , position.Y ), terraSprite.Color));
                     position.X += 30;
                 }
                 position.X = playerPos.X;
@@ -62,6 +62,7 @@ namespace splix.io
                     top = point.Y;
                 }
             }
+
             //THIS SETS THE TERRITORYS INNER SPRITES
             for (int x = (int)left; x <= (int)right; x += 30)
             {
