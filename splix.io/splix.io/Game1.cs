@@ -17,7 +17,7 @@ namespace splix.io
         SpriteBatch spriteBatch;
         Player player;
         Random random;
-       
+
         public int colorselect;
         List<Color> colors;
         Grid grid;
@@ -44,30 +44,34 @@ namespace splix.io
         {
             random = new Random();
             colorselect = random.Next(0, 18);
-            colors = new List<Color>();
-            colors.Add(Color.Maroon);
-            colors.Add(Color.Navy);
-            colors.Add(Color.Gold);
-            colors.Add(Color.OrangeRed);
-            colors.Add(Color.Violet);
-            colors.Add(Color.Wheat);
-            colors.Add(Color.DarkOliveGreen);
-            colors.Add(Color.SaddleBrown);
-            colors.Add(Color.DarkSalmon);
-            colors.Add(Color.Yellow);
-            colors.Add(Color.Pink);
-            colors.Add(Color.BlueViolet);
-            colors.Add(Color.BlanchedAlmond);
-            colors.Add(Color.Khaki);
-            colors.Add(Color.Turquoise);
-            colors.Add(Color.Crimson);
-            colors.Add(Color.White);
-            colors.Add(Color.White);
-            colors.Add(Color.White);
+            colors = new List<Color>()
+            {
+                Color.Maroon,
+                Color.Navy,
+                Color.Gold,
+                Color.OrangeRed,
+                Color.Violet,
+                Color.Wheat,
+                Color.DarkOliveGreen,
+                Color.SaddleBrown,
+                Color.DarkSalmon,
+                Color.Yellow,
+                Color.Pink,
+                Color.BlueViolet,
+                Color.BlanchedAlmond,
+                Color.Khaki,
+                Color.Turquoise,
+                Color.Crimson,
+                Color.White,
+                Color.White,
+                Color.White
+            };
+
+
             spriteBatch = new SpriteBatch(GraphicsDevice);
             grid = new Grid(GraphicsDevice.Viewport.Width / 30, GraphicsDevice.Viewport.Height / 30, Content.Load<Texture2D>("CellBlock"));
             player = new Player(Content.Load<Texture2D>("soldier"), new Vector2(random.Next(0, 64) * 30, random.Next(0, 36) * 30), colors[colorselect], 5, Content.Load<Texture2D>("tail"), Content.Load<Texture2D>("capturedcell"), Content.Load<Texture2D>("pixel"));
-            
+
         }
         protected override void UnloadContent()
         {
@@ -79,7 +83,7 @@ namespace splix.io
             ks = Keyboard.GetState();
             if (menu)
             {
-                if(ks.IsKeyDown(Keys.Enter))
+                if (ks.IsKeyDown(Keys.Enter))
                 {
                     menu = false;
                 }
