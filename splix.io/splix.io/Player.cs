@@ -15,8 +15,10 @@ namespace splix.io
     public class Player : Sprite
     {
         protected int _speed;
-        int direction = 0;
-        int directionToChangeTo = 0;
+        public int direction = 1;
+        public int lives;
+        public bool isdead = false;
+        public int directionToChangeTo = 0;
         List<Vector2> _points;
         KeyboardState lastKS;
         public int speed
@@ -34,38 +36,55 @@ namespace splix.io
         trail _trail;
         territory _terra;
         Texture2D pix;
-
-        public Player(Texture2D image, Vector2 location, Color color, int speed, Texture2D trail, Texture2D terraimage, Texture2D pixel)
+        float scaleX;
+        float scaleY;
+        int hitCount;
+        public Keys UpKey;
+        public Keys Downkey;
+        public Keys Leftkey;
+        public Keys Rightkey;
+        public Keys shootkey;
+        public bool isboom = false;
+        public Player(Texture2D image, Vector2 location, Color color, int speed, Texture2D trail, Texture2D terraimage, Texture2D pixel, Keys upKey, Keys downkey, Keys leftkey, Keys rightkey, Keys Shootkey)
             : base(image, location, color)
         {
+            UpKey = upKey;
+            Downkey = downkey;
+            Leftkey = leftkey;
+            Rightkey = rightkey;
+            shootkey = Shootkey;
             pix = pixel;
             _points = new List<Vector2>();
             _speed = speed;
             _terra = new territory(new Sprite(terraimage, new Vector2(location.X + _origin.X, location.Y + _origin.Y), color), _location);
+            
             _trail = new trail(new Sprite(trail, new Vector2(location.X, location.Y), color));
+            scaleX = 1f;
+            scaleY = 1f;
+            hitCount = 1;
         }
 
-        public void Update(GameTime gametime, KeyboardState ks, KeyboardState prevKs)
+        public void Update(GameTime gametime, KeyboardState ks, KeyboardState prevKs, Sprite healthBar)
         {
-            if (ks.IsKeyDown(Keys.Left) && prevKs.IsKeyUp(Keys.Left) && direction != 2)
+            if (ks.IsKeyDown(Leftkey) && prevKs.IsKeyUp(Leftkey) && direction != 2)
             {
                 directionToChangeTo = 0;
                 _changedDirection = true;
                 _rotation = -MathHelper.PiOver2;
             }
-            if (ks.IsKeyDown(Keys.Up) && prevKs.IsKeyUp(Keys.Up) && direction != 3)
+            if (ks.IsKeyDown(UpKey) && prevKs.IsKeyUp(UpKey) && direction != 3)
             {
                 directionToChangeTo = 1;
                 _changedDirection = true;
                 _rotation = 0;
             }
-            if (ks.IsKeyDown(Keys.Right) && prevKs.IsKeyUp(Keys.Right) && direction != 0)
+            if (ks.IsKeyDown(Rightkey) && prevKs.IsKeyUp(Rightkey) && direction != 0)
             {
                 directionToChangeTo = 2;
                 _changedDirection = true;
                 _rotation = MathHelper.PiOver2;
             }
-            if (ks.IsKeyDown(Keys.Down) && prevKs.IsKeyUp(Keys.Down) && direction != 1)
+            if (ks.IsKeyDown(Downkey) && prevKs.IsKeyUp(Downkey) && direction != 1)
             {
                 directionToChangeTo = 3;
                 _changedDirection = true;
@@ -82,23 +101,39 @@ namespace splix.io
                     direction = directionToChangeTo;
                 }
             }
+            if ((_location.X - 15) % 30 == 0 && (_location.Y - 15) % 30 == 0)
+            {
+                if (!_terra.PositionIntersects(this))
+                {
+                    _trail.AddTrail(_location);
+                    _points.Add(_location);
+                }
+            }
 
             move();
 
             if (_trail.HitTrail(this))
             {
+                hitCount++;
+                scaleX = 1 / (float)hitCount;
+                //hitcount makes life bar smalLer IT WORKS PERFECTLY DON'T GET RID OF IT!!!!!!!!!!!!!!!!!!!!!!!!!!!
+                //had to use hitcount to make it so ratio goes up and makes bar smaller
+                lives -= 1;
+                if (lives > 0)
+                {
+                    
+                    healthBar.Scale = new Vector2(scaleX, scaleY);
+                    
+                }
 
+                _trail.ClearTrail();
             }
-
-            if (!_terra.PositionIntersects(this))
+            if(lives <= 0)
             {
-                _trail.AddTrail(_location);
-                _points.Add(_location);
+                isdead = true;
             }
-
-            else
-            {
-
+            if (_terra.PositionIntersects(this))
+            { 
                 _trail.ClearTrail();
                 if (_points.Count >= 1)
                 {

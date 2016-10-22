@@ -35,9 +35,9 @@ namespace splix.io
 
         public bool HitTrail(Sprite sprite)
         {
-            for (int i = 0; i < _tails.Count; i++)
+            for (int i = 0; i < _tails.Count - 1; i++)
             {
-                if (_tails[i].Hitbox.Intersects(_tails[i].Hitbox))
+                if (_tails[i].Hitbox.Intersects(sprite.Hitbox))
                 {
                     return true;
                 }
