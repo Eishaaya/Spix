@@ -12,14 +12,19 @@ using Microsoft.Xna.Framework.Media;
 
 namespace splix.io
 {
-    class trail
+    public class trail
     {
-        List<Sprite> _tails;
+        public List<Sprite> _tails;
+        public Dictionary<int, int> _tailsHit;
         Sprite _trailSprite;
+
+        int hitIndex = -1;
 
         public trail(Sprite trailSprite)
         {
             _tails = new List<Sprite>();
+            _tailsHit = new Dictionary<int, int>();
+
             _trailSprite = trailSprite;
         }
 
@@ -31,6 +36,8 @@ namespace splix.io
         public void AddTrail(Vector2 position)
         {
             _tails.Add(new Sprite(_trailSprite.Image, position, _trailSprite.Color));
+            _tails[_tails.Count - 1].Layer = 0.99f;
+            _tailsHit.Add(_tails.Count - 1, 0);
         }
 
         public bool HitTrail(Sprite sprite)
@@ -39,6 +46,8 @@ namespace splix.io
             {
                 if (_tails[i].Hitbox.Intersects(sprite.Hitbox))
                 {
+                    hitIndex = i;
+                    _tailsHit[hitIndex]++;
                     return true;
                 }
             }
@@ -46,9 +55,20 @@ namespace splix.io
             return false;
         }
 
+        public bool HasPieceBeenHit(int index)
+        {
+            return _tailsHit[index] > 1;
+        }
+
+        public int GetHitIndex()
+        {
+            return hitIndex;
+        }
+
         public void ClearTrail()
         {
             _tails.Clear();
+            _tailsHit.Clear();
         }
         public void draw(SpriteBatch batch)
         {

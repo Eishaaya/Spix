@@ -22,6 +22,19 @@ namespace splix.io
         protected float _rotation;
         protected Vector2 _origin;
         protected Rectangle _hitbox;
+        protected float _layer = 1f;
+
+        public float Layer
+        {
+            get
+            {
+                return _layer;
+            }
+            set
+            {
+                _layer = value;
+            }
+        }
 
         public Vector2 Location
         {
@@ -108,12 +121,12 @@ namespace splix.io
             _color = color;
             _scale = Vector2.One;
             _origin = new Vector2(image.Width / 2, image.Height / 2);
-            _hitbox = new Rectangle((int)(position.X - (image.Width / 2)), (int)(position.Y), _image.Width/2, _image.Height/2);
+            _hitbox = new Rectangle((int)(position.X - (image.Width / 2)), (int)(position.Y), _image.Width / 2, _image.Height / 2);
         }
 
         public virtual void draw(SpriteBatch spbt)
         {
-            spbt.Draw(_image, _location, null, _color, _rotation, _origin, _scale, _effects, 1f);
+            spbt.Draw(_image, _location, null, _color, _rotation, _origin, _scale, _effects, _layer);
         }
         public void debugDraw(SpriteBatch batch, Texture2D pixel)
         {

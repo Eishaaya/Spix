@@ -22,13 +22,14 @@ namespace splix.io
     public class boom : Sprite
     {
         protected int speed;
-       public int number = 3;
+        public int number = 3;
         protected KeyboardState ks;
         Type type;
         public boom(Texture2D image, Vector2 location, Color color, Type type, int speed)
             : base(image, location, color)
         {
             this.speed = speed;
+            _layer = 0.8f;
         }
         public void Update(GameTime gt)
         {
@@ -50,8 +51,8 @@ namespace splix.io
                 _location = new Vector2(_location.X - speed, _location.Y);
             }
         }
-             public void dicheck()
-            {
+        public void dicheck()
+        {
             ks = Keyboard.GetState();
             if (ks.IsKeyDown(Keys.Down))
             {
@@ -70,6 +71,6 @@ namespace splix.io
                 number = 0;
             }
         }
-        }
     }
+}
 

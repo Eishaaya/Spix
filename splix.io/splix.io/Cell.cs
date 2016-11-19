@@ -25,6 +25,7 @@ namespace splix.io
         public Cell(Sprite cellSprite)
         {
             _cellSprite = cellSprite;
+            _cellSprite.Layer = 0f;
         }
 
         public void Draw(SpriteBatch spriteBatch)

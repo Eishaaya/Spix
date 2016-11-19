@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Xna.Framework;
@@ -16,13 +16,12 @@ namespace splix.io
         int playerchose2 = 0;
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
-        TimeSpan tillshoot = new TimeSpan(0, 0, 0, 0, 750);
-        TimeSpan waitshoot;
         Player player;
         Random random;
+        TimeSpan untilmusend = new TimeSpan(0, 0, 2, 46);
+        TimeSpan waittillmusend;
         int playerchose;
         Player otherplayer;
-        int number;
         int startlife;
         int startlife2;
         Sprite stanbutt;
@@ -36,20 +35,23 @@ namespace splix.io
         Sprite rules;
         Sprite health;
         Sprite death;
+        Sprite title;
+        Sprite kingbutt;
+        List<Texture2D> pi;
+        Random pis = new Random();
+        List<Sprite> dooms;
         int menuleft = 2;
         Sprite ninjabutt;
         Sprite phantombutt;
-        List<boom> booms;
         List<Texture2D> playerImages;
-        //we need a list of players (not just texture2ds, the player class)
-        //then we should add both players to it, and we can make the screen work with that
         List<Player> players;
         List<int> speeds;
         Random playerrand = new Random();
-        public int colorselect;
-        List<Color> colors;
+        Song backmusic;
         Grid grid;
-        int number2;
+        List<int> ph;
+        List<float> pa;
+        public List<SoundEffect> phs;
         bool isboom2 = false;
         KeyboardState prevKs;
         KeyboardState ks;
@@ -66,39 +68,16 @@ namespace splix.io
             graphics.PreferredBackBufferWidth = 1920;
             graphics.PreferredBackBufferHeight = 1080;
             graphics.ApplyChanges();
+            Window.Title = "Spixio";
             base.Initialize();
         }
         protected override void LoadContent()
         {
             random = new Random();
-            colorselect = random.Next(0, 18);
-            colors = new List<Color>()
-            {
-                Color.Maroon,
-                Color.Navy,
-                Color.Gold,
-                Color.OrangeRed,
-                Color.Violet,
-                Color.Wheat,
-                Color.DarkOliveGreen,
-                Color.SaddleBrown,
-                Color.DarkSalmon,
-                Color.Yellow,
-                Color.Pink,
-                Color.BlueViolet,
-                Color.BlanchedAlmond,
-                Color.Khaki,
-                Color.Turquoise,
-                Color.Crimson,
-                Color.White,
-                Color.White,
-                Color.White
-            };
-            number = -1;
-            number2 = -1;
-            playerchose = number;
+            dooms = new List<Sprite>();
+            ph = new List<int>();
+            pa = new List<float>();
             playerImages = new List<Texture2D>();
-            booms = new List<boom>();
             playerImages.Add(Content.Load<Texture2D>("killer"));
             playerImages.Add(Content.Load<Texture2D>("mover"));
             playerImages.Add(Content.Load<Texture2D>("circle"));
@@ -109,40 +88,357 @@ namespace splix.io
             playerImages.Add(Content.Load<Texture2D>("wiz"));
             playerImages.Add(Content.Load<Texture2D>("ninja"));
             playerImages.Add(Content.Load<Texture2D>("phantom"));
+            playerImages.Add(Content.Load<Texture2D>("king"));
             speeds = new List<int>();
             speeds.Add(2);
             speeds.Add(30);
             speeds.Add(15);
+            speeds.Add(3);
+            speeds.Add(6);
             speeds.Add(5);
-            speeds.Add(6);
-            speeds.Add(6);
-            speeds.Add(6);
+            speeds.Add(5);
             speeds.Add(5);
             speeds.Add(3);
             speeds.Add(10);
+            speeds.Add(2);
+            #region pawnloadingstuff
+            pi = new List<Texture2D>();
+            pi.Add(Content.Load<Texture2D>("sn"));
+            pi.Add(Content.Load<Texture2D>("mn"));
+            pi.Add(Content.Load<Texture2D>("spn"));
+            pi.Add(Content.Load<Texture2D>("sn"));
+            pi.Add(Content.Load<Texture2D>("mn"));
+            pi.Add(Content.Load<Texture2D>("spn"));
+            pi.Add(Content.Load<Texture2D>("sn"));
+            pi.Add(Content.Load<Texture2D>("mn"));
+            pi.Add(Content.Load<Texture2D>("spn"));
+            pi.Add(Content.Load<Texture2D>("sn"));
+            pi.Add(Content.Load<Texture2D>("mn"));
+            pi.Add(Content.Load<Texture2D>("spn"));
+            pi.Add(Content.Load<Texture2D>("sn"));
+            pi.Add(Content.Load<Texture2D>("mn"));
+            pi.Add(Content.Load<Texture2D>("spn"));
+            pi.Add(Content.Load<Texture2D>("sn"));
+            pi.Add(Content.Load<Texture2D>("mn"));
+            pi.Add(Content.Load<Texture2D>("spn"));
+            pi.Add(Content.Load<Texture2D>("br"));
+            pi.Add(Content.Load<Texture2D>("v"));
+            pi.Add(Content.Load<Texture2D>("v"));
+            pi.Add(Content.Load<Texture2D>("v"));
+            pi.Add(Content.Load<Texture2D>("a"));
+            pi.Add(Content.Load<Texture2D>("a"));
+            pi.Add(Content.Load<Texture2D>("a"));
+            pi.Add(Content.Load<Texture2D>("c"));
+            pi.Add(Content.Load<Texture2D>("c"));
+            pi.Add(Content.Load<Texture2D>("ar"));
+            pi.Add(Content.Load<Texture2D>("ar"));
+            pi.Add(Content.Load<Texture2D>("ar"));
+            pi.Add(Content.Load<Texture2D>("ar"));
+            pi.Add(Content.Load<Texture2D>("ar"));
+            pi.Add(Content.Load<Texture2D>("ar"));
+            pi.Add(Content.Load<Texture2D>("ar"));
+            pi.Add(Content.Load<Texture2D>("ar"));
+            pi.Add(Content.Load<Texture2D>("ar"));
+            pi.Add(Content.Load<Texture2D>("sn"));
+            pi.Add(Content.Load<Texture2D>("mn"));
+            pi.Add(Content.Load<Texture2D>("spn"));
+            pi.Add(Content.Load<Texture2D>("sn"));
+            pi.Add(Content.Load<Texture2D>("mn"));
+            pi.Add(Content.Load<Texture2D>("spn"));
+            pi.Add(Content.Load<Texture2D>("sn"));
+            pi.Add(Content.Load<Texture2D>("mn"));
+            pi.Add(Content.Load<Texture2D>("spn"));
+            pi.Add(Content.Load<Texture2D>("sn"));
+            pi.Add(Content.Load<Texture2D>("mn"));
+            pi.Add(Content.Load<Texture2D>("spn"));
+            pi.Add(Content.Load<Texture2D>("sn"));
+            pi.Add(Content.Load<Texture2D>("mn"));
+            pi.Add(Content.Load<Texture2D>("spn"));
+            pi.Add(Content.Load<Texture2D>("sn"));
+            pi.Add(Content.Load<Texture2D>("mn"));
+            pi.Add(Content.Load<Texture2D>("spn"));
+            pi.Add(Content.Load<Texture2D>("br"));
+            pi.Add(Content.Load<Texture2D>("v"));
+            pi.Add(Content.Load<Texture2D>("v"));
+            pi.Add(Content.Load<Texture2D>("v"));
+            pi.Add(Content.Load<Texture2D>("a"));
+            pi.Add(Content.Load<Texture2D>("a"));
+            pi.Add(Content.Load<Texture2D>("a"));
+            pi.Add(Content.Load<Texture2D>("c"));
+            pi.Add(Content.Load<Texture2D>("c"));
+            pi.Add(Content.Load<Texture2D>("ar"));
+            pi.Add(Content.Load<Texture2D>("ar"));
+            pi.Add(Content.Load<Texture2D>("ar"));
+            pi.Add(Content.Load<Texture2D>("ar"));
+            pi.Add(Content.Load<Texture2D>("ar"));
+            pi.Add(Content.Load<Texture2D>("ar"));
+            pi.Add(Content.Load<Texture2D>("ar"));
+            pi.Add(Content.Load<Texture2D>("ar"));
+            pi.Add(Content.Load<Texture2D>("ar"));
+            pi.Add(Content.Load<Texture2D>("d"));
+            ph.Add(45);
+            ph.Add(30);
+            ph.Add(75);
+            ph.Add(45);
+            ph.Add(30);
+            ph.Add(75);
+            ph.Add(45);
+            ph.Add(30);
+            ph.Add(75);
+            ph.Add(45);
+            ph.Add(30);
+            ph.Add(75);
+            ph.Add(45);
+            ph.Add(30);
+            ph.Add(75);
+            ph.Add(45);
+            ph.Add(30);
+            ph.Add(75);
+            ph.Add(45);
+            ph.Add(30);
+            ph.Add(75);
+            ph.Add(225);
+            ph.Add(20);
+            ph.Add(20);
+            ph.Add(20);
+            ph.Add(15);
+            ph.Add(15);
+            ph.Add(15);
+            ph.Add(120);
+            ph.Add(120);
+            ph.Add(30);
+            ph.Add(30);
+            ph.Add(30);
+            ph.Add(30);
+            ph.Add(30);
+            ph.Add(30);
+            ph.Add(30);
+            ph.Add(30);
+            ph.Add(30);
+            ph.Add(45);
+            ph.Add(30);
+            ph.Add(75);
+            ph.Add(45);
+            ph.Add(30);
+            ph.Add(75);
+            ph.Add(45);
+            ph.Add(30);
+            ph.Add(75);
+            ph.Add(45);
+            ph.Add(30);
+            ph.Add(75);
+            ph.Add(45);
+            ph.Add(30);
+            ph.Add(75);
+            ph.Add(45);
+            ph.Add(30);
+            ph.Add(75);
+            ph.Add(45);
+            ph.Add(30);
+            ph.Add(75);
+            ph.Add(225);
+            ph.Add(20);
+            ph.Add(20);
+            ph.Add(20);
+            ph.Add(15);
+            ph.Add(15);
+            ph.Add(15);
+            ph.Add(120);
+            ph.Add(120);
+            ph.Add(30);
+            ph.Add(30);
+            ph.Add(30);
+            ph.Add(30);
+            ph.Add(30);
+            ph.Add(30);
+            ph.Add(30);
+            ph.Add(30);
+            ph.Add(30);
+            ph.Add(500);
+            pa.Add(1);
+            pa.Add(2);
+            pa.Add(.5f);
+            pa.Add(1);
+            pa.Add(2);
+            pa.Add(.5f);
+            pa.Add(1);
+            pa.Add(2);
+            pa.Add(.5f);
+            pa.Add(1);
+            pa.Add(2);
+            pa.Add(.5f);
+            pa.Add(1);
+            pa.Add(2);
+            pa.Add(.5f);
+            pa.Add(1);
+            pa.Add(2);
+            pa.Add(.5f);
+            pa.Add(3);
+            pa.Add(.25f);
+            pa.Add(.25f);
+            pa.Add(.25f);
+            pa.Add(2.5f);
+            pa.Add(2.5f);
+            pa.Add(2.5f);
+            pa.Add(1);
+            pa.Add(1);
+            pa.Add(.75f);
+            pa.Add(.75f);
+            pa.Add(.75f);
+            pa.Add(.75f);
+            pa.Add(.75f);
+            pa.Add(.75f);
+            pa.Add(.75f);
+            pa.Add(.75f);
+            pa.Add(.75f);
+            pa.Add(1);
+            pa.Add(2);
+            pa.Add(.5f);
+            pa.Add(1);
+            pa.Add(2);
+            pa.Add(.5f);
+            pa.Add(1);
+            pa.Add(2);
+            pa.Add(.5f);
+            pa.Add(1);
+            pa.Add(2);
+            pa.Add(.5f);
+            pa.Add(1);
+            pa.Add(2);
+            pa.Add(.5f);
+            pa.Add(1);
+            pa.Add(2);
+            pa.Add(.5f);
+            pa.Add(3);
+            pa.Add(.25f);
+            pa.Add(.25f);
+            pa.Add(.25f);
+            pa.Add(2.5f);
+            pa.Add(2.5f);
+            pa.Add(2.5f);
+            pa.Add(1);
+            pa.Add(1);
+            pa.Add(.75f);
+            pa.Add(.75f);
+            pa.Add(.75f);
+            pa.Add(.75f);
+            pa.Add(.75f);
+            pa.Add(.75f);
+            pa.Add(.75f);
+            pa.Add(.75f);
+            pa.Add(.75f);
+            pa.Add(7.5f);
+            phs = new List<SoundEffect>();
+            phs.Add(Content.Load<SoundEffect>("ks"));
+            phs.Add(Content.Load<SoundEffect>("ks"));
+            phs.Add(Content.Load<SoundEffect>("ks"));
+            phs.Add(Content.Load<SoundEffect>("ks"));
+            phs.Add(Content.Load<SoundEffect>("ks"));
+            phs.Add(Content.Load<SoundEffect>("ks"));
+            phs.Add(Content.Load<SoundEffect>("ks"));
+            phs.Add(Content.Load<SoundEffect>("ks"));
+            phs.Add(Content.Load<SoundEffect>("ks"));
+            phs.Add(Content.Load<SoundEffect>("ks"));
+            phs.Add(Content.Load<SoundEffect>("ks"));
+            phs.Add(Content.Load<SoundEffect>("ks"));
+            phs.Add(Content.Load<SoundEffect>("ks"));
+            phs.Add(Content.Load<SoundEffect>("ks"));
+            phs.Add(Content.Load<SoundEffect>("ks"));
+            phs.Add(Content.Load<SoundEffect>("ks"));
+            phs.Add(Content.Load<SoundEffect>("ks"));
+            phs.Add(Content.Load<SoundEffect>("ks"));
+            phs.Add(Content.Load<SoundEffect>("brsound"));
+            phs.Add(Content.Load<SoundEffect>("brsound"));
+            phs.Add(Content.Load<SoundEffect>("brsound"));
+            phs.Add(Content.Load<SoundEffect>("brsound"));
+            phs.Add(Content.Load<SoundEffect>("ks"));
+            phs.Add(Content.Load<SoundEffect>("ks"));
+            phs.Add(Content.Load<SoundEffect>("ks"));
+            phs.Add(Content.Load<SoundEffect>("ks"));
+            phs.Add(Content.Load<SoundEffect>("ks"));
+            phs.Add(Content.Load<SoundEffect>("brsound"));
+            phs.Add(Content.Load<SoundEffect>("brsound"));
+            phs.Add(Content.Load<SoundEffect>("brsound"));
+            phs.Add(Content.Load<SoundEffect>("brsound"));
+            phs.Add(Content.Load<SoundEffect>("brsound"));
+            phs.Add(Content.Load<SoundEffect>("brsound"));
+            phs.Add(Content.Load<SoundEffect>("brsound"));
+            phs.Add(Content.Load<SoundEffect>("brsound"));
+            phs.Add(Content.Load<SoundEffect>("brsound"));
+            phs.Add(Content.Load<SoundEffect>("ks"));
+            phs.Add(Content.Load<SoundEffect>("ks"));
+            phs.Add(Content.Load<SoundEffect>("ks"));
+            phs.Add(Content.Load<SoundEffect>("ks"));
+            phs.Add(Content.Load<SoundEffect>("ks"));
+            phs.Add(Content.Load<SoundEffect>("ks"));
+            phs.Add(Content.Load<SoundEffect>("ks"));
+            phs.Add(Content.Load<SoundEffect>("ks"));
+            phs.Add(Content.Load<SoundEffect>("ks"));
+            phs.Add(Content.Load<SoundEffect>("ks"));
+            phs.Add(Content.Load<SoundEffect>("ks"));
+            phs.Add(Content.Load<SoundEffect>("ks"));
+            phs.Add(Content.Load<SoundEffect>("ks"));
+            phs.Add(Content.Load<SoundEffect>("ks"));
+            phs.Add(Content.Load<SoundEffect>("ks"));
+            phs.Add(Content.Load<SoundEffect>("ks"));
+            phs.Add(Content.Load<SoundEffect>("ks"));
+            phs.Add(Content.Load<SoundEffect>("ks"));
+            phs.Add(Content.Load<SoundEffect>("brsound"));
+            phs.Add(Content.Load<SoundEffect>("brsound"));
+            phs.Add(Content.Load<SoundEffect>("brsound"));
+            phs.Add(Content.Load<SoundEffect>("brsound"));
+            phs.Add(Content.Load<SoundEffect>("ks"));
+            phs.Add(Content.Load<SoundEffect>("ks"));
+            phs.Add(Content.Load<SoundEffect>("ks"));
+            phs.Add(Content.Load<SoundEffect>("ks"));
+            phs.Add(Content.Load<SoundEffect>("ks"));
+            phs.Add(Content.Load<SoundEffect>("brsound"));
+            phs.Add(Content.Load<SoundEffect>("brsound"));
+            phs.Add(Content.Load<SoundEffect>("brsound"));
+            phs.Add(Content.Load<SoundEffect>("brsound"));
+            phs.Add(Content.Load<SoundEffect>("brsound"));
+            phs.Add(Content.Load<SoundEffect>("brsound"));
+            phs.Add(Content.Load<SoundEffect>("brsound"));
+            phs.Add(Content.Load<SoundEffect>("brsound"));
+            phs.Add(Content.Load<SoundEffect>("brsound"));
+            phs.Add(Content.Load<SoundEffect>("ds"));
+            #endregion
+            backmusic = Content.Load<Song>("music for game");
             spriteBatch = new SpriteBatch(GraphicsDevice);
             grid = new Grid(GraphicsDevice.Viewport.Width / 30, GraphicsDevice.Viewport.Height / 30, Content.Load<Texture2D>("CellBlock"));
             Texture2D playerImage = playerImages[0];
-            Vector2 playerPos = new Vector2((random.Next(0, 64) * 30) + 15, (random.Next(0, 36) * 30) + 15);
-            killbutt = new Sprite(Content.Load<Texture2D>("killbutt"), new Vector2(200, 200), Color.White);
-            health = new Sprite(Content.Load<Texture2D>("health"), new Vector2(850, 30), colors[colorselect]);
-            health.Scale = new Vector2(1, 1);
-            death = new Sprite(Content.Load<Texture2D>("death"), new Vector2(850, 30), colors[colorselect]);
-            rules = new Sprite(Content.Load<Texture2D>("rules"), new Vector2(960, 500), Color.White);
-            wizbutt = new Sprite(Content.Load<Texture2D>("wizbutt"), new Vector2(500, 500), Color.White);
-            movebutt = new Sprite(Content.Load<Texture2D>("movebutt"), new Vector2(500, 200), Color.White);
-            stanbutt = new Sprite(Content.Load<Texture2D>("stanbutt"), new Vector2(800, 200), Color.White);
-            trapbutt = new Sprite(Content.Load<Texture2D>("trapper butt"), new Vector2(1700, 200), Color.White);
-            regbutt = new Sprite(Content.Load<Texture2D>("circlebutt"), new Vector2(1100, 200), Color.White);
-            phantombutt = new Sprite(Content.Load<Texture2D>("phantombutt"), new Vector2(1700, 500), Color.White);
-            ninjabutt = new Sprite(Content.Load<Texture2D>("ninjabutt"), new Vector2(1400, 500), Color.White);
-            soldierbutt = new Sprite(Content.Load<Texture2D>("soldierbutt"), new Vector2(1400, 200), Color.White);
-            huntbutt = new Sprite(Content.Load<Texture2D>("huntbutt"), new Vector2(200, 500), Color.White);
-            player = new Player(playerImage, new Vector2(playerPos.X, playerPos.Y), colors[colorselect], speeds[0], Content.Load<Texture2D>("tail"), Content.Load<Texture2D>("capturedcell"), Content.Load<Texture2D>("pixel"), Keys.Up, Keys.Down, Keys.Left, Keys.Right, Keys.Space);
-            otherplayer = new Player(playerImages[playerchose2], new Vector2(playerPos.X, playerPos.Y), colors[colorselect], speeds[playerchose2], Content.Load<Texture2D>("tail"), Content.Load<Texture2D>("capturedcell"), Content.Load<Texture2D>("pixel"), Keys.W, Keys.S, Keys.A, Keys.D, Keys.Tab);
+            killbutt = new Sprite(Content.Load<Texture2D>("killbutt"), new Vector2(200, 500), Color.White);
+            rules = new Sprite(Content.Load<Texture2D>("rules"), new Vector2(960, 800), Color.White);
+            title = new Sprite(Content.Load<Texture2D>("title"), new Vector2(960, 200), Color.White);
+            wizbutt = new Sprite(Content.Load<Texture2D>("wizbutt"), new Vector2(500, 800), Color.White);
+            movebutt = new Sprite(Content.Load<Texture2D>("movebutt"), new Vector2(500, 500), Color.White);
+            stanbutt = new Sprite(Content.Load<Texture2D>("stanbutt"), new Vector2(800, 500), Color.White);
+            trapbutt = new Sprite(Content.Load<Texture2D>("trapper butt"), new Vector2(1700, 500), Color.White);
+            regbutt = new Sprite(Content.Load<Texture2D>("circlebutt"), new Vector2(1100, 500), Color.White);
+            phantombutt = new Sprite(Content.Load<Texture2D>("phantombutt"), new Vector2(1700, 800), Color.White);
+            ninjabutt = new Sprite(Content.Load<Texture2D>("ninjabutt"), new Vector2(1400, 800), Color.White);
+            kingbutt = new Sprite(Content.Load<Texture2D>("kingbutt"), new Vector2(250, 200), Color.White);
+            soldierbutt = new Sprite(Content.Load<Texture2D>("soldierbutt"), new Vector2(1400, 500), Color.White);
+            huntbutt = new Sprite(Content.Load<Texture2D>("huntbutt"), new Vector2(200, 800), Color.White);
+            player = new Player(playerImages[0], new Vector2((random.Next(0, 64) * 30) + 15, (random.Next(0, 36) * 30) + 15), speeds[0], Content.Load<Texture2D>("tail"), Content.Load<Texture2D>("capturedcell"), Content.Load<Texture2D>("pixel"), Player.playerType.human);
+            player.shootkey = Keys.Space;
+            player.Rightkey = Keys.Right;
+            player.Leftkey = Keys.Left;
+            player.Downkey = Keys.Down;
+            player.UpKey = Keys.Up;
+            otherplayer = new Player(playerImages[0], new Vector2((random.Next(0, 64) * 30) + 15, (random.Next(0, 36) * 30) + 15), speeds[0], Content.Load<Texture2D>("tail"), Content.Load<Texture2D>("capturedcell"), Content.Load<Texture2D>("pixel"), Player.playerType.human);
+            otherplayer.UpKey = Keys.W;
+            otherplayer.Downkey = Keys.S;
+            otherplayer.Leftkey = Keys.A;
+            otherplayer.Rightkey = Keys.D;
+            otherplayer.shootkey = Keys.Tab;
             players = new List<Player>();
             players.Add(player);
             players.Add(otherplayer);
+            health = new Sprite(Content.Load<Texture2D>("health"), new Vector2(850, 30), players[count].colors[players[count].colorselect]);
+            death = new Sprite(Content.Load<Texture2D>("death"), new Vector2(850, 30), players[count].colors[players[count].colorselect]);
+            MediaPlayer.Play(backmusic);
+            health.Scale = new Vector2(1, 1);
         }
         protected override void UnloadContent()
         {
@@ -150,7 +446,12 @@ namespace splix.io
         }
         protected override void Update(GameTime gameTime)
         {
-            //for(int i =)
+            waittillmusend += gameTime.ElapsedGameTime;
+            if(waittillmusend >= untilmusend)
+            {
+                MediaPlayer.Play(backmusic);
+                waittillmusend = TimeSpan.Zero;
+            }
             prevKs = ks;
             ks = Keyboard.GetState();
             if (menu)
@@ -158,98 +459,116 @@ namespace splix.io
 
                 if (ks.IsKeyDown(Keys.NumPad1))
                 {
-                    number = 0;
+                    players[count].number = 0;
                     players[count].lives = 1;
 
                 }
                 if (ks.IsKeyDown(Keys.NumPad2))
                 {
-                    number = 1;
+                    players[count].number = 1;
                     players[count].lives = 1;
 
                 }
                 if (ks.IsKeyDown(Keys.NumPad3))
                 {
-                    number = 3;
+                    players[count].number = 3;
                     players[count].lives = 3;
 
                 }
                 if (ks.IsKeyDown(Keys.NumPad4))
                 {
-                    number = 2;
+                    players[count].number = 2;
                     players[count].lives = 1;
 
                 }
                 if (ks.IsKeyDown(Keys.NumPad5))
                 {
-                    number = 4;
+                    players[count].number = 4;
                     players[count].lives = 3;
 
                 }
                 if (ks.IsKeyDown(Keys.NumPad6))
                 {
-                    number = 5;
+                    players[count].number = 5;
                     players[count].isboom = true;
                     players[count].lives = 2;
                 }
                 if (ks.IsKeyDown(Keys.NumPad7))
                 {
-                    number = 6;
+                    players[count].number = 6;
                     players[count].isboom = true;
                     players[count].lives = 1;
                 }
                 if (ks.IsKeyDown(Keys.NumPad8))
                 {
-                    number = 7;
+                    players[count].number = 7;
                     players[count].isboom = true;
                     players[count].lives = 1;
                 }
                 if (ks.IsKeyDown(Keys.NumPad9))
                 {
-                    number = 8;
+                    players[count].number = 8;
                     players[count].isboom = true;
                     players[count].lives = 1;
                 }
                 if (ks.IsKeyDown(Keys.NumPad0))
                 {
-                    number = 9;
+                    players[count].number = 9;
                     players[count].lives = 1;
+                }
+                if (ks.IsKeyDown(Keys.Multiply))
+                {
+                    players[count].number = 10;
+                    players[count].lives = 1;
+                    players[count].ispawner = true;
                 }
                 if (ks.IsKeyDown(Keys.Enter) && prevKs.IsKeyUp(Keys.Enter))
                 {
-                    if (number == -1)
+                    if (players[count].number == -1)
                     {
-                        number = playerrand.Next(0, 10);
+                        players[count].number = playerrand.Next(0, 11);
                         players[count].lives = 1;
                     }
-                    if (number == 5)
+                    if (players[count].number == 10)
+                    {
+                        players[count].ispawner = true;
+                    }
+                    if (players[count].number == 5)
                     {
                         players[count].isboom = true;
                         players[count].lives = 2;
+                        players[count].boomimage = Content.Load<Texture2D>("trap");
+                        players[count].boomspeed = 0;
                     }
-                    if (number == 8)
+                    if (players[count].number == 8)
                     {
                         players[count].isboom = true;
                         players[count].lives = 1;
+                        players[count].boomimage = Content.Load<Texture2D>("sh");
+                        players[count].boomspeed = 35;
                     }
-                    if (number == 6)
+                    if (players[count].number == 6)
                     {
                         players[count].isboom = true;
+                        players[count].boomimage = Content.Load<Texture2D>("ammo");
+                        players[count].boomspeed = 60;
                     }
-                    if (number == 7)
+                    if (players[count].number == 7)
                     {
                         players[count].isboom = true;
+                        players[count].boomimage = Content.Load<Texture2D>("fire");
                         players[count].lives = 3;
+                        players[count].boomspeed = 30;
                     }
-                    if (number == 4)
+                    if (players[count].number == 4)
                     {
                         players[count].lives = 3;
                     }
-                    if (number == 3)
+                    if (players[count].number == 3)
                     {
                         players[count].lives = 3;
                     }
-                    playerchose = number;
+                    playerchose = players[count].number;
                     players[count].Image = playerImages[playerchose];
                     players[count].speed = speeds[playerchose];
                     count++;
@@ -263,6 +582,7 @@ namespace splix.io
                     //}
                     //}
                 }
+                #region Blah
                 //if (menuleft == 1)
                 //{
                 //    if (ks.IsKeyDown(Keys.NumPad1))
@@ -362,102 +682,295 @@ namespace splix.io
                 //            menu = false;
                 //        }
                 //    }
+                #endregion
             }
             else
             {
-                for (int i = 0; i < players.Count; i++)
+                bool somethingHit = false;
+
+                for (int p = 0; p < players.Count; p++)
                 {
-                    if (players[i].isboom)
+                    for (int op = 0; op < players.Count; op++)
                     {
-                        waitshoot += gameTime.ElapsedGameTime;
-                    }
-                    if (players[i].isdead == false)
-                    {
-                        players[i].Update(gameTime, ks, prevKs, health);
-                    }
-                }
-                if (waitshoot >= tillshoot)
-                {
-                    for (int i = 0; i < players.Count; i++)
-                    {
-                        if (ks.IsKeyDown(players[i].shootkey))
+                        if (players[p].IntersectsWithTrail(players[op]) && p != op)
                         {
-                            if (number == 6)
+                            /*if (players[i].lives == players[i].prevlives)
                             {
-                                boom bulletToAdd = new boom(Content.Load<Texture2D>("ammo"), new Vector2(players[i].Location.X, players[i].Location.Y), colors[colorselect], Type.Bullet, 60);
-                                bulletToAdd.number = players[i].direction;
-                                booms.Add(bulletToAdd);
+                                players[i].lives--;
                             }
-                            if (number == 5)
+                            
+                            players[i].prevlives = players[i].lives;*/
+                            if (players[p].Image != playerImages[0] && players[p].Image != playerImages[3])
                             {
-                                boom traptoadd = new boom(Content.Load<Texture2D>("trap"), new Vector2(players[i].Location.X, players[i].Location.Y), colors[colorselect], Type.Trap, 0);
-                                traptoadd.number = players[i].direction;
-                                booms.Add(traptoadd);
+                                somethingHit = true;
+
+                                players[p].lives--;
+                                if (players[p].lives <= 0)
+                                {
+                                    players[p].isdead = true;
+                                    players.RemoveAt(p);
+                                }
                             }
-                            if (number == 7)
+                            else
                             {
-                                boom firetoadd = new boom(Content.Load<Texture2D>("fire"), new Vector2(players[i].Location.X, players[i].Location.Y), colors[colorselect], Type.Fire, 30);
-                                firetoadd.number = players[i].direction;
-                                booms.Add(firetoadd);
+                                //if (players[i].Location == players[j])
                             }
-                            if (number == 8)
+                            break;
+                        }
+                        if (menu == false && players[p].isdead == false && players[op].isdead == false)
+                        {
+                            players[p].Update(gameTime, ks, prevKs, health, gameTime);
+                            players[p].pawnimage = pi[pis.Next(0, 73)];
+                            players[p].pawnhealth = ph[pis.Next(0, 73)];
+                            players[p].pawnattack = pa[pis.Next(0, 73)];
+                            players[p].pawnhit = phs[pis.Next(0, 73)];
+                            for (int googoogaga = 0; googoogaga < players[op]._trail._tails.Count; googoogaga++)
                             {
-                                boom shurktoadd = new boom(Content.Load<Texture2D>("sh"), new Vector2(players[i].Location.X, players[i].Location.Y), colors[colorselect], Type.shurk, 25);
-                                shurktoadd.number = players[i].direction;
-                                booms.Add(shurktoadd);
+                                if (players[p].IntersectsWithTerritory(players[op]._trail._tails[googoogaga].Hitbox) && p != op)
+                                {
+                                    if (players[p].IntersectsWithTrail(players[op]) && p != op)
+                                    {
+                                        players[p].lives--;
+                                    }
+                                }
+                            }//How can you miss me??????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????
+                            if (players[op].pawns.Count > 0 && p != op)
+                            {
+                                for (int opp = 0; opp < players[op].pawns.Count; opp++)
+                                {
+                                    if (players[p].IntersectsWithTrail(players[op].pawns[opp]) && players[p].number != 0)
+                                    {
+                                        players[p].lives--;
+                                    }
+                                        for (int pp = 0; pp < players[p].pawns.Count; pp++)
+                                        {
+                                            for (int googoogaga = 0; googoogaga < players[op]._trail._tails.Count; googoogaga++)
+                                            {
+                                                if (players[p].IntersectsWithTerritory(players[op]._trail._tails[googoogaga].Hitbox) && p != op)
+                                                {
+                                                    if (players[p].IntersectsWithTrail(players[op].pawns[opp]) && p != op)
+                                                    {
+                                                        players[p].lives--;
+                                                    }
+                                                }
+                                            }
+                                        if (players[p].pawns.Count > 0 && players[op].pawns.Count > 0)
+                                        {
+                                            if (players[p].pawns[pp].Hitbox.Intersects(players[op].pawns[opp].Hitbox) && opp != pp && p != op)
+                                            {
+                                                players[p].pawns[pp].speed = players[op].pawns[opp].speed;
+                                                players[op].pawns[opp].speed = players[p].pawns[pp].speed;
+                                                if (players[p].pawns[pp].waitattack >= players[p].pawns[pp].untilattack)
+                                                {
+                                                    players[op].pawns[opp]._health -= players[p].pawns[pp]._attack;
+                                                    players[p].ishitsoundplaying = true;
+                                                    players[p].pawns[pp].waitattack = TimeSpan.Zero;
+                                                }
+                                                if (players[op].pawns[opp].waitattack >= players[op].pawns[opp].untilattack)
+                                                {
+                                                    players[p].pawns[pp]._health -= players[op].pawns[opp]._attack;
+                                                    players[op].ishitsoundplaying = true;
+                                                    players[op].pawns[opp].waitattack = TimeSpan.Zero;
+                                                }
+                                            }
+                                            else
+                                            {
+                                                players[p].pawns[pp].speed = players[p].pawns[pp].prevspeed;
+                                                players[op].pawns[opp].speed = players[op].pawns[opp].prevspeed;
+                                                players[p].ishitsoundplaying = false;
+                                                players[op].ishitsoundplaying = false;
+                                            }
+                                            if(players[op].ishitsoundplaying)
+                                            {
+                                                players[op].hassoundstarted = true;
+                                                if(players[op].hassoundstarted)
+                                                {
+                                                    players[op].pawns[opp].PlaySound();
+                                                }
+                                            }
+                                            else
+                                            {
+                                                players[op].pawns[opp].StopSound();
+                                            }
+                                            if (players[p].ishitsoundplaying)
+                                            {
+                                                players[p].hassoundstarted = true;
+                                                if (players[p].hassoundstarted)
+                                                {
+                                                    players[p].pawns[pp].Hit.Play();
+                                                }
+                                            }
+                                            if (players[p].isdead)
+                                            {
+                                                players[p].pawns.RemoveAt(pp);
+                                                pp--;
+                                            }
+                                            if (players[op].isdead)
+                                            {
+                                                players[op].pawns.RemoveAt(opp);
+                                                opp--;
+                                            }
+                                        }
+                                    }
+                                }
                             }
-                            waitshoot = TimeSpan.Zero;
+                        }
+                        if (somethingHit)
+                        {
+                            break;
+                        }
+                        for (int b = 0; b < players[op].booms.Count; b++)
+                        {
+                            if (players[p].number != 9 && players[p].number != 8)
+                            {
+                                if (players[p].IntersectsWithTrail(players[op].booms[b]) && op != p || players[op].booms[b].Hitbox.Intersects(players[p].Hitbox) && op != p)
+                                {
+                                    players[p].lives--;
+                                    players[op].booms.RemoveAt(b);
+                                    dooms.Add(new Sprite(Content.Load<Texture2D>("boom"), players[p].Location, players[p].colors[players[p].colorselect]));
+                                }
+                            }
+
                         }
                     }
-                    //if (waitshoot >= tillshoot)
-                    //{
-                    //    if (ks.IsKeyDown(Keys.LeftControl))
-                    //    {
-                    //        if (number2 == 6)
-                    //        {
-                    //            boom bulletToAdd = new boom(Content.Load<Texture2D>("ammo"), new Vector2(otherplayer.Location.X, otherplayer.Location.Y), colors[colorselect], Type.Bullet, 60);
-                    //            bulletToAdd.number = player.direction;
-                    //            booms.Add(bulletToAdd);
-                    //        }
-                    //        if (number2 == 5)
-                    //        {
-                    //            boom traptoadd = new boom(Content.Load<Texture2D>("trap"), new Vector2(otherplayer.Location.X, otherplayer.Location.Y), colors[colorselect], Type.Trap, 0);
-                    //            traptoadd.number = player.direction;
-                    //            booms.Add(traptoadd);
-                    //        }
-                    //        if (number2 == 7)
-                    //        {
-                    //            boom firetoadd = new boom(Content.Load<Texture2D>("fire"), new Vector2(otherplayer.Location.X, otherplayer.Location.Y), colors[colorselect], Type.Fire, 30);
-                    //            firetoadd.number = player.direction;
-                    //            booms.Add(firetoadd);
-                    //        }
-                    //        if (number2 == 8)
-                    //        {
-                    //            boom shurktoadd = new boom(Content.Load<Texture2D>("sh"), new Vector2(otherplayer.Location.X, otherplayer.Location.Y), colors[colorselect], Type.shurk, 25);
-                    //            shurktoadd.number = player.direction;
-                    //            booms.Add(shurktoadd);
-                    //        }
-                    //        waitshoot = TimeSpan.Zero;
-                    //    }
-
-                    //}
                 }
-                for (int i = 0; i < booms.Count; i++)
+
+                for (int i = 0; i < players.Count; i++)
                 {
-                    booms[i].Update(gameTime);
+                    if (players[i].captured)
+                    {
+                        //remove others territory
+                        for (int j = 0; j < players.Count; j++)
+                        {
+                            if (i != j)
+                            {
+                                players[i].CaptureTerra(players[j]);
+                            }
+                        }
+
+                        players[i].captured = false;
+                    }
+                }
+
+
+                //if (waitshoot >= tillshoot)
+                //{
+                //    if (ks.IsKeyDown(Keys.LeftControl))
+                //    {
+                //        if (number2 == 6)
+                //        {
+                //            boom bulletToAdd = new boom(Content.Load<Texture2D>("ammo"), new Vector2(otherplayer.Location.X, otherplayer.Location.Y), players[count].colors[players[count].colorselect], Type.Bullet, 60);
+                //            bulletToAdd.number = player.direction;
+                //            players[count].booms.Add(bulletToAdd);
+                //        }
+                //        if (number2 == 5)
+                //        {
+                //            boom traptoadd = new boom(Content.Load<Texture2D>("trap"), new Vector2(otherplayer.Location.X, otherplayer.Location.Y), players[count].colors[players[count].colorselect], Type.Trap, 0);
+                //            traptoadd.number = player.direction;
+                //            players[count].booms.Add(traptoadd);
+                //        }
+                //        if (number2 == 7)
+                //        {
+                //            boom firetoadd = new boom(Content.Load<Texture2D>("fire"), new Vector2(otherplayer.Location.X, otherplayer.Location.Y), players[count].colors[players[count].colorselect], Type.Fire, 30);
+                //            firetoadd.number = player.direction;
+                //            players[count].booms.Add(firetoadd);
+                //        }
+                //        if (number2 == 8)
+                //        {
+                //            boom shurktoadd = new boom(Content.Load<Texture2D>("sh"), new Vector2(otherplayer.Location.X, otherplayer.Location.Y), players[count].colors[colorselect], Type.shurk, 25);
+                //            shurktoadd.number = player.direction;
+                //            players[count].booms.Add(shurktoadd);
+                //        }
+                //        waitshoot = TimeSpan.Zero;
+                //    }
+
+                //}
+                for (int e = 0; e < players.Count; e++)
+                {
+                    for (int i = 0; i < players[e].booms.Count; i++)
+                    {
+                        players[e].booms[i].Update(gameTime);
+                    }
                 }
                 base.Update(gameTime);
             }
         }
+        //                       	                                ,   ,  
+        //                                       $,  $,     ,            
+        //                                        "ss.$ss. .s'     
+        //               	                ,     .ss$$$$$$$$$$s,              
+        //                       	        $. s$$$$$$$$$$$$$$`$$Ss
+        //                                   "$$$$$$$$$$$$$$$$$$o$$$       ,       
+        //                                  s$$$$$$$$$$$$$$$$$$$$$$$$s,  ,s
+        //                                 s$$$$$$$$$"$$$$$$""""$$$$$$"$$$$$,   						
+        //                       	      s$$$$$$$$$$s""$$$$ssssss"$$$$$$$$"
+        //                                $$s$$$$$$$$$$'              					
+        //                                s$$$$$$$$$$,             					
+        //                                s$$$$$$$$$$$$s,...             						
+        //                ssssssz`ssss$$$$$$$$$$$$$$$$$$$$####s.          $$$$$$$
+        //                   $$$$$$$$$$$$$$$$$$$$$$$$$$#####$$$$$$"$$$$$$$$$$$$'
+        //                    s$$$$$$$$$$$$$$$$$$"$$$$$$$$$$$$$$$$$$$$$####s""     .$$$|
+        //                      s$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$##ssss.$$" $ 
+        //    	                   $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$"
+        //       	                $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$S$$$$$$$ 
+        //               	             ,   ,"     '  $$$$$$$$$$$$$$$$####s  
+        //                       	     $.          .s$$$$$$$$$$$$$$$$$####"
+        //      		          ,           "$s.   ..ssS$$$$$$$$$$$$$$$$$$$####"
+        //              		  $           .$$$S$$$$$$$$$$$$$$$$$$$$$$$$#####"
+        //               	 Ss     ..sS$$$$$$$$$$$$$$$$$$$$$$$$$$$######""
+        //       	          "$$sS$$$$$$$$$$$$$$$$$$$$$$$$$$$########"
+        //       	   ,      s$$$$$$$$$$$$$$$$$$$$$$$$#########""'
+        // 	         $    s$$$$$$$$$$$$$$$$$$$$$#######""'      s'         ,
+        //  	        $$..$$$$$$$$$$$$$$$$$$######"'       ....,$$....    ,$
+        //  	         "$$$$$$$$$$$$$$$######"' ,     .sS$$$$$$$$$$$$$$$$s$$
+        //       	      $$$$$$$$$$$$#####"     $, .s$$$$$$$$$$$$$$$$$$$$$$$$s.
+        //	  )          $$$$$$$$$$$#####'      `$$$$$$$$$###########$$$$$$$$$$$.
+        //  ((          $$$$$$$$$$$#####       $$$$$$$$###"       "####$$$$$$$$$$ 
+        //  ) \         $$$$$$$$$$$$####.     $$$$$$###"             "###$$$$$$$$$   s'
+        //	(   )        $$$$$$$$$$$$$####.   $$$$$###"                ####$$$$$$$$s$$'
+        //	)  ( (       $$"$$$$$$$$$$$#####.$$$$$###' -Tua Xiong     .###$$$$$$$$$$"
+        //	(  )  )   _,$"   $$$$$$$$$$$$######.$$##'                .###$$$$$$$$$$
+        // ) (  ( \.         "$$$$$$$$$$$$$#######,,,.          ..####$$$$$$$$$$$"
+        //(   )$ )  )        ,$$$$$$$$$$$$$$$$$$####################$$$$$$$$$$$"        
+        //(   ($$  ( \     _sS"  `"$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$S$$,       
+        //	)  )$$$s ) )  .      .   `$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$"'  `$$   
+        // 	(   $$$Ss/  .$,    .$,,s$$$$$$##S$$$$$$$$$$$$$$$$$$$$$$$$S""        ' 
+        //   	\)_$$$$$$$$$$$$$$$$$$$$$$$##"  $$        `$$.        `$$.
+        //       	`"S$$$$$$$$$$$$$$$$$#"      $          `$          `$														
+        //                   `"""""""""""""'         '           '           '
 
+        //                 ?                               |||||||
+        //                __*_             //              |◘|||◘|
+        //             //(____)           //               |||||||
+        //            ////○ ○|\          //             ◘◘◘◘◘◘◘◘◘◘◘◘◘ 
+        //         ,__///  -  |\        //                ◘◘◘◘◘◘◘◘◘  ||
+        //        /  \\   |||  ;       //                             |||
+        //       /____\....::./\      //                   
+        //      _/__/#\_ _,,_/--\    //                    
+        //      /___/######## \/""-(\</                    
+        //     _/__/ '#######  ""^(/</                     
+        //   __/ /   ,)))=:=(,    //.                      
+        //  |,--\   /Q...... /.  (/                        
+        //  /       .Q....../..\                           
+        //         /.Q ..../...\                           
+        //        /......./.....\                          
+        //        /...../  \.....\                         
+        //        /_.._./   \..._\                         
+        //         (` )      (` )                          
+        //         | /        \ |                          
+        //         '(          )'                          
+        //        /+|          |+\                         
+        //        |,/          \,/                         
+        //        [|||]	        [|||]                       
         protected override void Draw(GameTime gameTime)
         {
             GraphicsDevice.Clear(Color.CornflowerBlue);
 
-            spriteBatch.Begin();
+            spriteBatch.Begin(SpriteSortMode.FrontToBack, BlendState.AlphaBlend);
+            //spriteBatch.Begin();
             if (menu)
             {
-                GraphicsDevice.Clear(colors[colorselect]);
+                GraphicsDevice.Clear(players[count].colors[players[count].colorselect]);
                 killbutt.draw(spriteBatch);
                 movebutt.draw(spriteBatch);
                 stanbutt.draw(spriteBatch);
@@ -468,26 +981,45 @@ namespace splix.io
                 wizbutt.draw(spriteBatch);
                 ninjabutt.draw(spriteBatch);
                 phantombutt.draw(spriteBatch);
+                kingbutt.draw(spriteBatch);
                 rules.draw(spriteBatch);
+                title.draw(spriteBatch);
             }
             else
             {
                 grid.Draw(spriteBatch);
                 health.draw(spriteBatch);
+
+                for (int i = 0; i < players.Count; i++)
+                {
+                    if (players[i].isdead == false)
+                    {
+                        players[i].TerraDraw(spriteBatch);
+                    }
+                }
                 for (int e = 0; e < players.Count; e++)
                 {
                     if (players[e].isdead == false)
                     {
-                        players[e].draw(spriteBatch);
+                        players[e].TrailDraw(spriteBatch);
+                        players[e].Pawndraw(spriteBatch);
+                        players[e].Playerdraw(spriteBatch);
                     }
-                    for (int i = 0; i < booms.Count; i++)
+                    if (players[e].isboom)
                     {
-                        booms[i].draw(spriteBatch);
+                        for (int i = 0; i < players[e].booms.Count; i++)
+                        {
+                            players[e].booms[i].draw(spriteBatch);
+                        }
                     }
                     if (players[e].isdead)
                     {
                         death.draw(spriteBatch);
                     }
+                }
+                for (int i = 0; i < dooms.Count; i++)
+                {
+                    dooms[i].draw(spriteBatch);
                 }
                 // players[e].debugDraw(spriteBatch, Content.Load<Texture2D>("pixel"));
             }

@@ -12,24 +12,27 @@ using Microsoft.Xna.Framework.Media;
 
 namespace splix.io
 {
-    class territory
+    public class territory
     {
-        List<Sprite> _points;
+        public List<Sprite> _points;
         Sprite _terrasprite;
         int rectCount = 0;
+
+        float layer = 0.1f;
 
         public territory(Sprite terraSprite, Vector2 playerPos)
         {
             _points = new List<Sprite>();
             _terrasprite = terraSprite;
             Vector2 position = playerPos;
-            
+
             //add premade positions to draw
             for (int i = 0; i < 5; i++)
             {
                 for (int a = 0; a < 5; a++)
-                { 
-                    _points.Add(new Sprite( _terrasprite.Image, new Vector2 (position.X , position.Y ), terraSprite.Color));
+                {
+                    _points.Add(new Sprite(_terrasprite.Image, new Vector2(position.X, position.Y), terraSprite.Color));
+                    _points[_points.Count - 1].Layer = layer;
                     position.X += 30;
                 }
                 position.X = playerPos.X;
@@ -57,7 +60,7 @@ namespace splix.io
                 {
                     bottom = point.Y;
                 }
-                else if (point.Y  < top)
+                else if (point.Y < top)
                 {
                     top = point.Y;
                 }
@@ -66,18 +69,19 @@ namespace splix.io
             //THIS SETS THE TERRITORYS INNER SPRITES
             for (int x = (int)left; x <= (int)right; x += 30)
             {
-                for (int y = (int)top; y <= (int)bottom ; y += 30)
+                for (int y = (int)top; y <= (int)bottom; y += 30)
                 {
                     _points.Add(new Sprite(_terrasprite.Image, new Vector2(x, y), _terrasprite.Color));
+                    _points[_points.Count - 1].Layer = layer;
                 }
             }
+            layer += 0.0001f;
         }
-
-        public bool PositionIntersects(Sprite sprite)
+        public bool PositionIntersects(Rectangle hitBox)
         {
             for (int i = 0; i < _points.Count; i++)
             {
-                if (_points[i].Hitbox.Intersects(sprite.Hitbox))
+                if (_points[i].Hitbox.Intersects(hitBox))
                 {
                     return true;
                 }
