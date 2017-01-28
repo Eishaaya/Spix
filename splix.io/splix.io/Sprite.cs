@@ -19,7 +19,7 @@ namespace splix.io
         protected Texture2D _image;
         protected Vector2 _scale;
         protected SpriteEffects _effects;
-        protected float _rotation;
+        public float _rotation;
         protected Vector2 _origin;
         protected Rectangle _hitbox;
         protected float _layer = 1f;

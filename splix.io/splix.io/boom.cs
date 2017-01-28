@@ -17,7 +17,8 @@ namespace splix.io
         Bullet,
         Trap,
         Fire,
-        shurk
+        shurk,
+        arrow
     }
     public class boom : Sprite
     {

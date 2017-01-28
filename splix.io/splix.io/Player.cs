@@ -22,7 +22,7 @@ namespace splix.io
         protected int _speed;
         public TimeSpan tillshoot = new TimeSpan(0, 0, 0, 0, 750);
         public TimeSpan waitshoot;
-        public TimeSpan tillspawn = new TimeSpan(0, 0, 0, 1, 250);
+        public TimeSpan tillspawn = new TimeSpan(0, 0, 0, 0, 750);
         public bool isbr = false;
         public TimeSpan waitspawn;
         playerType type;
@@ -55,6 +55,7 @@ namespace splix.io
         bool _changedDirection = false;
         public trail _trail;
         public territory _terra;
+        public Texture2D arrow;
         Texture2D pix;
         float scaleX;
         float scaleY;
@@ -65,15 +66,21 @@ namespace splix.io
         public Keys Leftkey;
         public Keys Rightkey;
         public Keys shootkey;
+        public Texture2D arrowimage;
         public bool isboom = false;
         public Texture2D boomimage;
         public Texture2D pawnimage;
         public int pawnhealth;
+        public Texture2D gunimage;
+        public Texture2D cannonimage;
+        public Texture2D bulletimage;
+        public Texture2D ballimage;
         public float pawnattack;
         public bool captured = false;
         public bool ishitsoundplaying = false;
         public bool hassoundstarted = false;
         public SoundEffect pawnhit;
+        public int colorchose = 0;
         public Player(Texture2D image, Vector2 location, int speed, Texture2D trail, Texture2D terraimage, Texture2D pixel, playerType Type)
             : base(image, location, Color.White)
         {
@@ -100,8 +107,8 @@ namespace splix.io
                 Color.White,
                 Color.White
             };
-            colorselect = random.Next(0, 18);
-            Color = colors[colorselect];
+            
+            Color = colors[colorchose];
             pix = pixel;
             type = Type;
             _points = new List<Vector2>();
@@ -118,6 +125,9 @@ namespace splix.io
         }
         public void Update(GameTime gametime, KeyboardState ks, KeyboardState prevKs, Sprite healthBar, GameTime gt)
         {
+
+
+
             move();
             if (type == playerType.human)
             {
@@ -154,7 +164,34 @@ namespace splix.io
             {
                 for (int i = 0; i < pawns.Count; i++)
                 {
-                    pawns[i].update(gametime);
+                    pawns[i].arrowimage = arrow;
+                    pawns[i].bulletimage = bulletimage;
+                    pawns[i].ballimage = ballimage;
+                    if(arrowimage == pawns[i].Image)
+                    {
+                        pawns[i].isarcher = true;
+                    }
+                    else
+                    {
+                        pawns[i].isarcher = false;
+                    }
+                    if (gunimage == pawns[i].Image)
+                    {
+                        pawns[i].isgun = true;
+                    }
+                    else
+                    {
+                        pawns[i].isgun = false;
+                    }
+                    if (cannonimage == pawns[i].Image)
+                    {
+                        pawns[i].iscannon = true;
+                    }
+                    else
+                    {
+                        pawns[i].iscannon = false;
+                    }
+                        pawns[i].update(gametime);
                     if(pawns[i]._health <= 0)
                     {
                         pawns.RemoveAt(i);
@@ -169,11 +206,11 @@ namespace splix.io
                 {
                     if (isbr == false)
                     {
-                        pawns.Add(new pawns(pawnimage, _location, colors[colorselect], 3, pawnhealth, pawnattack, pawnhit, new TimeSpan(0, 0, 0, 1, 0)));
+                        pawns.Add(new pawns(pawnimage, _location, colors[colorselect], 3, pawnhealth, pawnattack, pawnhit, new TimeSpan(0, 0, 0, 0, 250)));
                     }
                     else if(isbr)
                     {
-                        pawns.Add(new pawns(pawnimage, _location, Color.Green, 1, pawnhealth - 15, pawnattack, pawnhit, new TimeSpan(0, 0, 0, 1, 500)));
+                        pawns.Add(new pawns(pawnimage, _location, Color.Green, 1, pawnhealth - 15, pawnattack, pawnhit, new TimeSpan(0, 0, 0, 0, 375)));
                     }
                     spawnready = false;
                     waitspawn = TimeSpan.Zero;
@@ -202,9 +239,22 @@ namespace splix.io
             }
             if ((_location.X - 15) % 30 == 0 && (_location.Y - 15) % 30 == 0)
             {
+                
+                if (colorchose < colors.Count)
+                {
+                    Color = colors[colorchose];
+                    _terra.ChangeTerritoryColor(colors[colorchose]);
+                    _trail.nextTrailColor = colors[colorchose];
+                    colorchose++;
+                }
+                else
+                {
+                    colorchose = 0;
+                }
                 if (!_terra.PositionIntersects(this.Hitbox))
                 {
                     _trail.AddTrail(_location);
+                   
                     _points.Add(_location);
                 }
             }
@@ -244,7 +294,17 @@ namespace splix.io
 
         public bool IntersectsWithTrail(Sprite sprite)
         {
-            return _trail.HitTrail(sprite) && !_trail.HasPieceBeenHit(_trail.GetHitIndex());
+
+            if(_trail.HitTrail(sprite))
+            {
+                if (!_trail.HasPieceBeenHit(_trail.GetHitIndex()))
+                {
+                    return true;
+                }
+            }
+
+            return false;
+            //return _trail.HitTrail(sprite) && !_trail.HasPieceBeenHit(_trail.GetHitIndex());
         }
 
         public bool IntersectsWithTerritory(Rectangle hitBox)
@@ -297,6 +357,7 @@ namespace splix.io
             for (int e = 0; e < pawns.Count; e++)
             {
                 pawns[e].draw(spbt);
+                pawns[e].arrowdraw(spbt);
             }
         }
         public void CaptureTerra(Player enemy)

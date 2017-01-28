@@ -40,6 +40,13 @@ namespace splix.io
             }
         }
 
+        public void ChangeTerritoryColor(Color color)
+        {
+            for(int i = 0; i < _points.Count; i++)
+            {
+                _points[i].Color = color;
+            }
+        }
         public void AddTerritory(List<Vector2> positions)
         {
             float bottom = positions[0].Y, top = positions[0].Y, left = positions[0].X, right = positions[0].X;

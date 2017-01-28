@@ -73,6 +73,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="boom.cs" />
+    <Compile Include="cameras are boring.cs" />
     <Compile Include="Cell.cs" />
     <Compile Include="Grid.cs" />
     <Compile Include="pawns.cs" />

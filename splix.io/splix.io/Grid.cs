@@ -62,14 +62,14 @@ namespace splix.io
                 }
                 x = 0;
                 y += _empty.Height;
-            }
+            }        
         }
 
         public void Draw(SpriteBatch batch)
         {
             for (int i = 0; i < blocks.Count; i++)
             {
-                blocks[i].Draw(batch);
+                blocks[i].Draw(batch);                
             }
         }
     }

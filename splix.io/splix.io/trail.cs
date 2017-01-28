@@ -17,6 +17,7 @@ namespace splix.io
         public List<Sprite> _tails;
         public Dictionary<int, int> _tailsHit;
         Sprite _trailSprite;
+        public Color nextTrailColor;
 
         int hitIndex = -1;
 
@@ -35,7 +36,7 @@ namespace splix.io
 
         public void AddTrail(Vector2 position)
         {
-            _tails.Add(new Sprite(_trailSprite.Image, position, _trailSprite.Color));
+            _tails.Add(new Sprite(_trailSprite.Image, position, nextTrailColor));
             _tails[_tails.Count - 1].Layer = 0.99f;
             _tailsHit.Add(_tails.Count - 1, 0);
         }
